@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void GenerateString (char* string,int n)
+{
+	int l = (1 << (n + 1)) - 1;
+	if (n == 0)
+	{
+    	string[0] = 'a';
+    	return;
+	}
+	GenerateString (string, n - 1);
+	string[l/2] = 'a'+ n;
+	strncpy(string + l / 2 + 1, string, l / 2);
+}
+
+int main()
+{
+	int n;
+	char *s,*a;
+	scanf ("%d",&n);
+	int l = (1<<(n + 1)) - 1;
+	s = (char*)malloc(sizeof(char)*(l+2));
+	s[l] = '\0';
+	GenerateString(s,n);
+	printf ("\n%s\n", s);
+	return 0;
+}
