@@ -13,9 +13,22 @@ typedef struct Proccess
 } Proccess;
 
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount);
+
+/*
+ * FIXIT:
+ * Называйте ф-и с заглавной: ReadTaskList ...
+ * также как и Split
+ */
 void readTaskList(FILE *inputFile, Proccess* proccessList, int *proccsessNum);
 void openProccesses(Proccess* proccessList, int proccessNum);
 void deleteProccessList(Proccess* proccessList, int proccessNum);
+
+/*
+ * Включите отображение "невидимых" символов.
+ * У вас где-то стоят символы табуляции, а где-то пробелы. У вас на компьютере символ табуляции = 4 пробела.
+ * У меня не так, поэтому форматирование местами съехало. Либо включите замену всех табов на пробелы, либо включите отображение всех символов
+ * и следите за их использованием.
+ */
 
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount)
 {
@@ -34,6 +47,9 @@ void Split(char* string, char* delimiters, char*** tokens, int* tokensCount)
 void readTaskList(FILE *inputFile, Proccess* proccessList, int* proccessNum)
 {
 	char string[MaxStrLength];
+  /*
+   * Обычно компилятор пишет предупреждение, когда есть неиспользуемые переменные.
+   */
 	int argc, i = 0, j;
 	while (fgets(string, MaxStrLength, inputFile) != NULL)
 	{
@@ -67,8 +83,16 @@ void openProccesses(Proccess* proccessList, int proccessNum)
 		{
 			sleep(proccessList[i].sleepTime);
 			execvp(proccessList[i].argv[0], proccessList[i].argv);
+      /*
+       * FIXIT:
+       * Можно что-то вывести, если не получилось запустить программу.
+       */
 		}
 	}
+	/*
+   * FIXIT:
+   * Нужно дождаться всех дочерних и выписать их статус.
+   */
 }
 
 void deleteProccessList(Proccess* proccessList, int proccessNum)
@@ -88,10 +112,13 @@ int main()
 
 	Proccess* proccessList = (Proccess*)malloc(sizeof(Proccess) * MaxProccessNum);
 
+/*
+ * Я не очень понимаю, зачем ставить слишком много пробелов между строками.
+ * Обычно их ставят, что отделить части кода, которые несут разную смысловую нагрузку (и объединить то, что делает общее дело). 
+ * Я бы без надобности не разделял строки пустой.
+ */
 	readTaskList(inputFile, proccessList, &proccessNum);
-
 	openProccesses(proccessList, proccessNum);
-
 	deleteProccessList (proccessList, proccessNum);
 	
 	free(proccessList);
