@@ -1,4 +1,4 @@
-1 pwd
+1 p
 9 pwd
 10 pwd
 4 ls -al

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 #define MaxStrLength 200
 #define StrDelim " "
@@ -13,9 +15,10 @@ typedef struct Proccess
 } Proccess;
 
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount);
-void readTaskList(FILE *inputFile, Proccess* proccessList, int *proccsessNum);
-void openProccesses(Proccess* proccessList, int proccessNum);
-void deleteProccessList(Proccess* proccessList, int proccessNum);
+void ReadTaskList(FILE *inputFile, Proccess* proccessList, int *proccsessNum);
+void OpenProccesses(Proccess* proccessList, int proccessNum);
+void DeleteProccessList(Proccess* proccessList, int proccessNum);
+
 
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount)
 {
@@ -31,10 +34,10 @@ void Split(char* string, char* delimiters, char*** tokens, int* tokensCount)
 	*tokensCount = k;
 }
 
-void readTaskList(FILE *inputFile, Proccess* proccessList, int* proccessNum)
+void ReadTaskList(FILE *inputFile, Proccess* proccessList, int* proccessNum)
 {
 	char string[MaxStrLength];
-	int argc, i = 0, j;
+	int argc, i = 0;
 	while (fgets(string, MaxStrLength, inputFile) != NULL)
 	{
 		char* str;
@@ -57,9 +60,11 @@ void readTaskList(FILE *inputFile, Proccess* proccessList, int* proccessNum)
 	*proccessNum = i;
 }
 
-void openProccesses(Proccess* proccessList, int proccessNum)
+void OpenProccesses(Proccess* proccessList, int proccessNum)
 {
-	int i;
+	int i, status, id[MaxProccessNum];
+    pid_t childID;
+
 	for (i = 0; i < proccessNum; i++)
 	{
 		pid_t pid = fork();
@@ -67,11 +72,24 @@ void openProccesses(Proccess* proccessList, int proccessNum)
 		{
 			sleep(proccessList[i].sleepTime);
 			execvp(proccessList[i].argv[0], proccessList[i].argv);
+            printf ("ERROR! Can't open the program \"%s\".\n", proccessList[i].argv[0]);
+            exit(1);
 		}
-	}
+        id[i] = pid;
+    }
+
+    do 
+	{
+	    childID = wait(&status);
+        for (i = 0; i < proccessNum; i++)
+        {
+            if (childID == id[i])
+                printf ("\nProcess %s ended and returned %d\n", proccessList[i].argv[0], status);
+        }
+	} while (childID != -1);
 }
 
-void deleteProccessList(Proccess* proccessList, int proccessNum)
+void DeleteProccessList(Proccess* proccessList, int proccessNum)
 {
 	int i;
 	for (i = 0; i < proccessNum; i++)
@@ -85,15 +103,13 @@ int main()
 {
 	int proccessNum;
 	FILE *inputFile = fopen("input.txt", "r");
-
 	Proccess* proccessList = (Proccess*)malloc(sizeof(Proccess) * MaxProccessNum);
 
-	readTaskList(inputFile, proccessList, &proccessNum);
-
-	openProccesses(proccessList, proccessNum);
-
-	deleteProccessList (proccessList, proccessNum);
+	ReadTaskList(inputFile, proccessList, &proccessNum);
+	OpenProccesses(proccessList, proccessNum);
+	DeleteProccessList (proccessList, proccessNum);
 	
 	free(proccessList);
+
 	return 0;
 } 
