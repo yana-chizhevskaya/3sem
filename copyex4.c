@@ -2,10 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
 #define K 2
-#define N 3e5
+#define N 3e7
 
 int* array;
 
@@ -18,8 +17,6 @@ typedef struct Number
 }Number;
 
 
-
-
 void* my_thread(void* interval) 
 {
     Number* a = (Number*)interval;
@@ -29,7 +26,6 @@ void* my_thread(void* interval)
         a->result += array[i];
         a->square += array[i] * array[i];    
     }
-    
     return NULL;
 }
 
@@ -42,8 +38,8 @@ int main()
     float average = 0.0, dispersion, calculation = 0.0, calculationSquare = 0.0;
     int reading[K];
     array = (int*)malloc(sizeof(int) * N);
+    
     srand(time(NULL));
-
     for (j = 0; j < N; j++)
         array[j] = rand()%100;
 
