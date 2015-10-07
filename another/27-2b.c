@@ -21,5 +21,5 @@ int main()
 		printf("[Child proccess was ended: %d] [Parent proccess: %d]\n" , childID, getpid());
 		exit(0);
 	}
-return 0;
+  return 0;
 } 
