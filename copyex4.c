@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define K 2
-#define N 3e7
+#define K 4
+#define N 3e8
 
 int* array;
 
@@ -14,7 +14,7 @@ typedef struct Number
     int end;
     int result;
     int square;
-}Number;
+} Number;
 
 
 void* my_thread(void* interval) 
@@ -29,7 +29,6 @@ void* my_thread(void* interval)
     return NULL;
 }
 
-
 int main()
 {
     pthread_t thread_id[K];
@@ -40,8 +39,9 @@ int main()
     array = (int*)malloc(sizeof(int) * N);
     
     srand(time(NULL));
+    clock_t startTime = clock();
     for (j = 0; j < N; j++)
-        array[j] = rand()%100;
+        array[j] = rand() % 2;
 
     for (i = 0; i < K; i++)
     {
@@ -61,8 +61,10 @@ int main()
     average = calculation / N;
     float averageSquare = calculationSquare / N;
     dispersion = averageSquare - average * average;
-    printf ("Average = %f\nAverage square = %f\nSquare of average = %f\nDispersion =  %f\n",
-        average, averageSquare, average * average, dispersion);
+    
+    clock_t finishTime = clock();
+    printf ("Average = %f\nAverage square = %f\nSquare of average = %f\nDispersion =  %f\nTime elapsed = %f\n",
+        average, averageSquare, average * average, dispersion, double(finishTime - startTime) / CLOCKS_PER_SEC);
     free(array);
     return 0;
 }
