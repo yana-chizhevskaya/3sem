@@ -1,7 +1,7 @@
-1 pwd
+1 p
 9 pwd
 10 pwd
 4 ls -al
-5 gcc hello.c -0 hello.out
+5 gcc hello.c -o hello.out
 6 ./hello.out
 7 gedit hello.c
