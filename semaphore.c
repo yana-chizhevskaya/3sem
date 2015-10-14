@@ -26,7 +26,6 @@ void* my_thread(void* dummy)
         }
         
         (*a)++;
-        printf("a = %d\n", *a);
         mybuf.sem_op = -1;
         mybuf.sem_flg = 0;
         mybuf.sem_num = 0;
@@ -59,6 +58,7 @@ int main()
         exit(-1);
     }
     mybuf.sem_op = 1;
+    
     semop(semid, &mybuf, 1);
     pthread_t thread_id1, thread_id2;
     int result1, result2;
