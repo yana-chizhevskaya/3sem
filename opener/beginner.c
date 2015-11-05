@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #define MaxStrLength 200
 #define StrDelim " "
 #define MaxArgNum 20
@@ -84,7 +83,7 @@ void OpenProccesses(Proccess* proccessList, int proccessNum)
         for (i = 0; i < proccessNum; i++)
         {
             if (childID == id[i])
-                printf ("\nProcess %s ended and returned %d\n", proccessList[i].argv[0], status);
+                printf ("\nProcess %s ended and returned %d\n", proccessList[i].argv[0], status >> 8);
         }
 	} while (childID != -1);
 }
