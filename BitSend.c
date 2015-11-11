@@ -10,6 +10,7 @@
 int bitNum = 0;
 pid_t pid;
 char s[LENGHT] = {0};
+char result[LENGHT] = {0};
 
 void readBit(int nsig)
 {
@@ -17,14 +18,14 @@ void readBit(int nsig)
     {
     }
     if (nsig == SIGUSR2)
-        s[bitNum / 8] |= (1 << (bitNum % 8));
+        result[bitNum / 8] = result[bitNum / 8] | (1 << (bitNum % 8));
     bitNum++;
     kill(pid, SIGINT);
 
     if (bitNum / 8 == LENGHT)
     {
-    	printf("%s\n", s);
-    	exit(0);
+    	printf("%s\n", result);
+    	//exit(0);
     }
 }
 
@@ -37,6 +38,7 @@ void sendBit()
     
     if (bitNum / 8 == LENGHT)
         exit(0);
+        
 }
 
 int main()
@@ -52,7 +54,7 @@ int main()
     if (new != 0) 
     {
         pid = new;
-	gets(s); 
+		gets(s);
         sendBit();
     }
 
