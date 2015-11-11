@@ -22,7 +22,10 @@ void readBit(int nsig)
     kill(pid, SIGINT);
 
     if (bitNum / 8 == LENGHT)
-        printf("%s\n", s);
+    {
+    	printf("%s\n", s);
+    	exit(0);
+    }
 }
 
 void sendBit()
@@ -49,7 +52,7 @@ int main()
     if (new != 0) 
     {
         pid = new;
-		gets(s); 
+	gets(s); 
         sendBit();
     }
 
