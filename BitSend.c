@@ -18,7 +18,7 @@ void readBit(int nsig)
     {
     }
     if (nsig == SIGUSR2)
-        result[bitNum / 8] = result[bitNum / 8] | (1 << (bitNum % 8));
+        result[bitNum / 8] |= (1 << (bitNum % 8));
     bitNum++;
     kill(pid, SIGINT);
 
@@ -54,7 +54,7 @@ int main()
     if (new != 0) 
     {
         pid = new;
-		gets(s);
+	gets(s);
         sendBit();
     }
 
