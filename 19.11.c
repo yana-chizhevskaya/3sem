@@ -8,16 +8,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-/*
- * 1000, 51001, 999 - надо вынести в константы
- */
+#define MAX_LENGHT 1000
+#define PORT 51001
 
 int main(int argc, char **argv)
 {
     int sockfd;
     int n;
     int i;
-    char sendline[1000], recvline[1000];
+    char sendline[MAX_LENGHT], recvline[MAX_LENGHT];
     struct sockaddr_in servaddr;
     
     if(argc != 2)
@@ -26,8 +25,8 @@ int main(int argc, char **argv)
         exit(1);
     }
     
-    bzero(sendline, 1000);
-    bzero(recvline, 1000);
+    bzero(sendline, MAX_LENGHT);
+    bzero(recvline, MAX_LENGHT);
     if((sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror(NULL);
@@ -36,7 +35,7 @@ int main(int argc, char **argv)
     
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(51001);
+    servaddr.sin_port = htons(PORT);
     if(inet_aton(argv[1], &servaddr.sin_addr) == 0)
     {
         printf("Invalid IP address\n");
@@ -54,14 +53,14 @@ int main(int argc, char **argv)
     {
         printf("Your action: ");
         fflush(stdin);
-        fgets(sendline, 1000, stdin);
+        fgets(sendline, MAX_LENGHT, stdin);
         if((n = write(sockfd, sendline, strlen(sendline) + 1)) < 0)
         {
             perror("cant wrrite\n");
             close(sockfd);
             exit(1);
         }
-        if((n = read(sockfd, recvline, 999)) < 0)
+        if((n = read(sockfd, recvline, MAX_LENGHT - 1)) < 0)
         {
             perror("cant read\n");
             close(sockfd);
