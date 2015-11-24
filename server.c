@@ -42,6 +42,9 @@ int main()
   {
     int port;
     int ip;
+    /*
+     * У вас же клиент сам приписывает имя к сообщению. Зачем это здесь?
+     */
 	char name[100];
   }; 
   
@@ -64,8 +67,8 @@ int main()
 		
 		for(i = 0; i < userscount; i++)
 		{
-		  if((cliaddr.sin_port == users[i].port) && (cliaddr.sin_addr.s_addr 			  == users[i].ip))
-		  newUser = i;
+		  if(cliaddr.sin_port == users[i].port && cliaddr.sin_addr.s_addr == users[i].ip)
+		    newUser = i;
 		}
 		
 		if(newUser < 0)
@@ -87,7 +90,7 @@ int main()
 			  	cliaddr.sin_port = users[i].port;
 			  	cliaddr.sin_addr.s_addr = users[i].ip;
 
-		 		if (sendto(sockfd, line, strlen(line)+1, 0, (struct 			 
+		 		if (sendto(sockfd, line, strlen(line) + 1, 0, (struct 			 
 								sockaddr*)&cliaddr, clilen) < 0)
 		   		{
 				  perror(NULL);

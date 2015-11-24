@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/*
+ * Пора уже привыкнуть выносить магические числа в отдельные константы.
+ * #define MAX_MESSAGE_LENGTH 1000
+ */
+
 int main(int argc, char** argv)
 {
   int sockfd;
@@ -49,7 +54,9 @@ int main(int argc, char** argv)
   printf("Welcome to the chat. Enter your name\n");
   gets(name);
 
-	
+/*
+ * У вас sendline пустая строка. Можно явно указать это, чтобы не путаться.
+ */
   if (sendto(sockfd, sendline, strlen(sendline) + 1, 0,
     (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
 	  {
