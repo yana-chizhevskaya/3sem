@@ -8,16 +8,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-/*
- * Пора уже привыкнуть выносить магические числа в отдельные константы.
- * #define MAX_MESSAGE_LENGTH 1000
- */
+#define MAX_MESSAGE_LENGTH 1000
+
 
 int main(int argc, char** argv)
 {
   int sockfd;
   int n, len;
-  char sendline[1000], recvline[1000], name[1000], message[1000], buf[] = ":    ";
+  char sendline[MAX_MESSAGE_LENGTH], recvline[MAX_MESSAGE_LENGTH], name[MAX_MESSAGE_LENGTH], message[MAX_MESSAGE_LENGTH], buf[] = ":    ";
   struct sockaddr_in servaddr, cliaddr;
   
   if (argc != 2)
@@ -54,10 +52,8 @@ int main(int argc, char** argv)
   printf("Welcome to the chat. Enter your name\n");
   gets(name);
 
-/*
- * У вас sendline пустая строка. Можно явно указать это, чтобы не путаться.
- */
-  if (sendto(sockfd, sendline, strlen(sendline) + 1, 0,
+
+  if (sendto(sockfd, NULL, 0, 0,
     (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
 	  {
 		perror(NULL);
@@ -70,7 +66,7 @@ int main(int argc, char** argv)
   
 	  while(1) {	
 		  strcpy(sendline, name);
-		  fgets(message, 1000, stdin);
+		  fgets(message, MAX_MESSAGE_LENGTH, stdin);
 		  strcat(sendline, buf);
 		  strcat(sendline, message);
 		  if (sendto(sockfd, sendline, strlen(sendline) + 1, 0,
@@ -87,7 +83,7 @@ int main(int argc, char** argv)
   {
   	while(1)
   	{
-	  if ((n = recvfrom(sockfd, recvline, 1000, 0, (struct sockaddr*) NULL, NULL)) < 0)
+	  if ((n = recvfrom(sockfd, recvline, MAX_MESSAGE_LENGTH, 0, (struct sockaddr*) NULL, NULL)) < 0)
 	  {
 		perror(NULL);
 		close(sockfd);
