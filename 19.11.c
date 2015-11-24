@@ -7,6 +7,11 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+/*
+ * 1000, 51001, 999 - надо вынести в константы
+ */
+
 int main(int argc, char **argv)
 {
     int sockfd;

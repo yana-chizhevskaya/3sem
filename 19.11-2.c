@@ -8,6 +8,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/*
+ * Магические числа
+ */
+
 int balance = 1e5, newsockfd, sockfd, n;
 
 void* my_thread(void* arg) {
@@ -17,6 +21,10 @@ void* my_thread(void* arg) {
 	char line[1000];
 	 while((n = read(*newsockfd, line, 999)) > 0)
      {
+       /*
+	* FIXIT:
+	* Все обращения для чтения и записи глобальной переменной balance - это критическая секция. Нужен семафор.
+	*/
         printf("%s", line);
 		int amount = atoi(line);
 		if (amount > 0)
@@ -93,6 +101,9 @@ int main(int argc, char **argv)
     {
         clilen = sizeof(cliaddr);
         int* newsockfd = (int*)malloc(sizeof(int));
+	/*
+	 * Придумали халявный способ с malloc`ом и используете который раз :)
+	 */
         if((*newsockfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen)) < 0)
         {
             perror(NULL);
@@ -101,9 +112,6 @@ int main(int argc, char **argv)
         }
 		printf("someone's connected, %d\n", *newsockfd);
 		result = pthread_create(&thread_id, (pthread_attr_t *)NULL, my_thread, newsockfd);
-       
-        
-        
     }  
                 
     
