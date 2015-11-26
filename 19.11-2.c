@@ -7,26 +7,50 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <sys/sem.h>
 
-/*
- * Магические числа
- */
+#define MAX_LENGHT 1000
+#define PORT 51001
 
 int balance = 1e5, newsockfd, sockfd, n;
 
 void* my_thread(void* arg) {
 
+	key_t key; 
+	int semid;
+	char pathname[] = "19.11-2.c"; 
     int* newsockfd = (int*)arg;
 
-	char line[1000];
-	 while((n = read(*newsockfd, line, 999)) > 0)
+	char line[MAX_LENGHT];
+	
+	if((key = ftok(pathname, 0)) < 0) {
+        printf("Can\'t generate key\n");
+        exit(-1);
+    }
+    
+    if((semid = semget(key, 1, 0666 | IPC_CREAT)) < 0)
+    {
+       printf("Can\'t create semaphore\n");
+       exit(-1);
+    }
+    
+    struct sembuf mybuf;
+
+	 while((n = read(*newsockfd, line, MAX_LENGHT - 1)) > 0)
      {
-       /*
-	* FIXIT:
-	* Все обращения для чтения и записи глобальной переменной balance - это критическая секция. Нужен семафор.
-	*/
+       	mybuf.sem_op = 1;
+    	mybuf.sem_flg = 0;
+    	mybuf.sem_num = 0;
+    	
+    	if (semop(semid , &mybuf , 1) < 0) 
+        {
+            printf("Can`t wait for condition\n");
+            exit(-1);
+        }
         printf("%s", line);
 		int amount = atoi(line);
+		
 		if (amount > 0)
 		{
 			balance += amount;
@@ -42,6 +66,15 @@ void* my_thread(void* arg) {
 				strcpy(line, "You borrow dollars from the bank!\n");
 			}
 		}
+		mybuf.sem_op = -1;
+        mybuf.sem_flg = 0;
+        mybuf.sem_num = 0;
+        
+        if (semop(semid , &mybuf , 1) < 0) 
+        {
+            printf("Can`t wait for condition\n");
+            exit(-1);
+        }
 		if((n = write(*newsockfd, line, strlen(line) + 1)) < 0)
 		        {
 		            perror(NULL);
@@ -49,7 +82,7 @@ void* my_thread(void* arg) {
 		            exit(1);
 		        }
 		
-     	bzero(line, 1000);
+     	bzero(line, MAX_LENGHT);
 	}
     if(n < 0)
     {
@@ -65,7 +98,7 @@ void* my_thread(void* arg) {
 int main(int argc, char **argv)
 {
     int i;
-    char line[1000];
+    char line[MAX_LENGHT];
     int clilen, result;
     pthread_t thread_id;
     
@@ -80,7 +113,7 @@ int main(int argc, char **argv)
     
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(51001);
+    servaddr.sin_port = htons(PORT);
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     if(bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
     {
@@ -118,4 +151,5 @@ int main(int argc, char **argv)
     close(sockfd);
     return 0;
 }
+
 
