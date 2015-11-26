@@ -35,6 +35,11 @@ void* my_thread(void* arg) {
        exit(-1);
     }
     
+    /*
+     * Лучше, но это снова не гарантирует отсутствие состояния гонки.
+     * На семинаре обсудим.
+     */
+    
     struct sembuf mybuf;
 
 	 while((n = read(*newsockfd, line, MAX_LENGHT - 1)) > 0)
@@ -128,15 +133,11 @@ int main(int argc, char **argv)
         close(sockfd);
         exit(1);
     }
-       
     
     while(1)
     {
         clilen = sizeof(cliaddr);
         int* newsockfd = (int*)malloc(sizeof(int));
-	/*
-	 * Придумали халявный способ с malloc`ом и используете который раз :)
-	 */
         if((*newsockfd = accept(sockfd, (struct sockaddr*)&cliaddr, &clilen)) < 0)
         {
             perror(NULL);
